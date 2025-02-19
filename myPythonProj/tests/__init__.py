@@ -1,4 +1,5 @@
 """This module initializes the test package."""
 
-from .calculator import Calculator
-from .calculation import Calculation, Calculations
+from calculator.operations import add, subtract, multiply, divide
+from calculator.calculation import Calculation
+from calculator.calculations import Calculations

@@ -1,108 +1,91 @@
-# IS601 Web Systems Development Homework 3
+# **Python Calculator Project with Faker**
 
-# 🧮 Improved Python Calculator  
+## Project Overview
+This project implements a **Python-based calculator** using **Object-Oriented Programming (OOP)** principles. It supports **addition, subtraction, multiplication, and division** operations while maintaining a history of calculations.
 
-## 📌 Overview  
-This project is a **high-precision calculator** built using Python’s `decimal.Decimal` module, ensuring **accuracy and reliability** in arithmetic operations. It follows **Object-Oriented Programming (OOP)** principles and software design best practices like **SOLID, DRY, GRASP, and Separation of Concerns**.  
-**SOLID** Principles:
-Single Responsibility: Each class has a specific role (Calculation, Calculator, Calculations).
-Open/Closed: Supports extension without modifying existing code.
-Liskov Substitution: No unnecessary subclassing, methods work interchangeably.
-Interface Segregation & Dependency Inversion: Classes interact with clearly defined methods.
-**DRY** (Don’t Repeat Yourself): Common logic is reused through functions and methods.
-**GRASP** (General Responsibility Assignment Software Patterns): Follows proper class responsibilities and interactions.
-**Separation of Concerns**: Different files handle calculations, history management, and testing separately.
-
-For this homework. what you need to do is to try to make the most complete calculator that can add, subtract, multiply, divide and store a history of calulations. The purpose of this assignment is to introduce you understand the principles of object oriented programming, unit testing, and design principles such as SOLID, DRY, GRASP, and Seperation of concerns. Its important to understand how to properly organize your code using the professional "grammer" of programming and not just the syntax of if statements and loops.
-
-
-
-## ✅ Features  
-
-- ✔ **Basic Arithmetic Operations** – Addition, Subtraction, Multiplication, Division  
-- ✔ **Avoids Floating-Point Precision Issues** – Uses `decimal.Decimal` instead of `float`  
-- ✔ **Calculation History** – Stores all previous calculations  
-- ✔ **Error Handling** – Prevents division by zero  
-- ✔ **Object-Oriented Design** – Implements **Static, Class, and Instance Methods**  
-- ✔ **100% Test Coverage** – Automated unit testing with `pytest`  
-- ✔ **Code Quality Assurance** – Uses `pylint` for clean, maintainable code  
+The project includes:
+- **OOP Principles**: Encapsulation, Inheritance, and Polymorphism
+- **Unit Testing**: `pytest`
+- **Test Coverage**: `pytest-cov`
+- **Static Code Analysis**: `pylint`
+- **CLI Support**: Interactive command-line interface
+- **Faker Integration**: Generate random test data for validation
 
 ---
 
-## 📁 Project Structure  
-📦 calculator_project ├── 📂 calculator # Core calculator modules │ ├── calculator.py # Calculator class with basic operations │ ├── calculation.py # Calculation & history management ├── 📂 tests # Unit tests using pytest │ ├── test_calculator.py ├── .gitignore # Ignore unnecessary files ├── requirements.txt # Required dependencies ├── README.md # Project documentation
-
-## 📥 Installation & Setup  
-
-### 🔹 Step 1: Clone the Repository  
+## **📂 Project Structure**
 ```bash
-git clone https://github.com/sandraroy3/WebSys-HW2-PythonCalculator.git
-cd myPythonProj
-git checkout HW3-improved_calculator #create new branch for hw3
+myPythonProj/
+│── calculator/          # Calculator logic
+│   ├── __init__.py
+│   ├── operations.py    # Functions: add, subtract, multiply, divide
+│   ├── calculation.py   # Single calculation class
+│   ├── calculations.py  # Manages calculation history
+│
+│── tests/               # Unit tests
+│   ├── __init__.py
+│   ├── conftest.py      # Pytest fixtures
+│   ├── test_calculator.py  # Unit tests for calculator functions
+│   ├── test_main.py     # CLI tests
+│
+│── main.py              # CLI implementation
+│── README.md            # Project documentation
+│── requirements.txt     # Dependencies
+│── pytest.ini           # Pytest configuration
+│── .pylintrc            # Pylint configuration
 ```
 
-### 🔹 Step 2: Create a Virtual Environment
+## Installation and Setup
+Step 1: Create a Virtual Environment
 ```python
 python -m venv venv
 source venv/bin/activate  # On Mac/Linux
 venv\Scripts\activate     # On Windows
 ```
 
-### 🔹 Step 3: Install dependencies
+Step 2: Install Faker and freeze to requirements.txt
 ```python
-pip install -r requirements.txt
+pip install faker
+pip freeze > requirements.txt
 ```
 
-### 🔹 Step 4: Run Tests
+Step 3: Generating Fake Test Data
+Faker is used to generate random numbers for test cases, ensuring robustness.
+
+Example usage in conftest.py:
 ```python
-pytest --pylint --cov
+def generate_test_data(num_records):
+    """Generate random test cases for the calculator."""
+    operation_mappings = {
+        'add': add,
+        'subtract': subtract,
+        'multiply': multiply,
+        'divide': divide
+    }
+
+    for _ in range(num_records):
+        a = Decimal(fake.random_int(min=1, max=100))
+        b = Decimal(fake.random_int(min=1, max=100))
+        operation_name = fake.random_element(elements=list(operation_mappings.keys()))
+        operation_func = operation_mappings[operation_name]
+
+        if operation_func == divide and b == 0:
+            expected = "ZeroDivisionError"
+        else:
+            expected = operation_func(a, b)
+
+        yield a, b, operation_name, expected
 ```
 
-## Usage
-Import and Perform Operations
-```python
-from decimal import Decimal
-from calculator import Calculator
-# Basic Operations
-print(Calculator.add(Decimal("0.1"), Decimal("0.2")))  # Output: 0.3
-print(Calculator.subtract(Decimal("5"), Decimal("2"))) # Output: 3
-print(Calculator.multiply(Decimal("3"), Decimal("4"))) # Output: 12
-print(Calculator.divide(Decimal("8"), Decimal("2")))   # Output: 4
-```
+Step 4: Testing
 
-Handling Calculation History
-```python
-from calculation import Calculation, Calculations
+Test data functionality <br>
+`pytest --num_records=10`
 
-# Create a new calculation
-calc1 = Calculation("add", Decimal("2"), Decimal("3"))
-Calculations.add_calculation(calc1)
+Test coverage <br>
+`pytest --cov=calculator --cov-report=term-missing`
 
-# Retrieve last calculation
-last_calc = Calculations.get_last_calculation()
-print(last_calc)  # Output: "2 add 3 = 5"
-
-# Clear history
-Calculations.clear_history()
-```
-
-Exception Handling (Division by Zero)
-```python
-try:
-    Calculator.divide(Decimal("5"), Decimal("0"))
-except ValueError as e:
-    print(e)  # Output: Cannot divide by zero
-```
-
-
-## Testing & Code Quality
-🔹 Run Unit Tests<br>
-`pytest
-`
-
-🔹 Check Code Quality with pylint<br>
-`pylint calculator tests`
-
-🔹 Check Test Coverage<br>
-`pytest --cov=calculator --import-mode=importlib
-`
+Test user input functionality on the command line: <br>
+`python main.py 1 2 add` <br>
+Getting output as below:
+The result of 1 add 2 is equal to 3
