@@ -1,84 +1,68 @@
-# Python Interactive Calculator with Commands, Plugins & Multiprocessing
+# Project: Preparing for Production – DevOps, Cloud Computing, Logging, and CI/CD
+This project integrates GitHub Actions, environment variables, and logging to prepare a Python application for a production environment.
 
-## Overview
-This project is a **command-line interactive calculator** that follows the **Command Pattern** and **Plugin Architecture**. The application dynamically loads commands (plugins) and executes them **using multiprocessing** to enhance performance. 
+## Features
+1. GitHub Actions (CI/CD) – Runs tests automatically when pushing to main.
+2. Environment Variables – Securely stores sensitive information.
+3. Logging – Implements structured logging instead of print() for better debugging.
 
-Supported **calculator operations**:
-- Addition (`add`)
-- Subtraction (`subtract`)
-- Multiplication (`multiply`)
-- Division (`divide`) *(with division by zero handling)*
-- Menu (`menu`) *(displays all available commands)*
+## Setup Instructions
+1️⃣ Clone the Repository  
+git clone https://github.com/your-username/your-repo.git  
+cd your-repo  
+2️⃣ Create a Virtual Environment  
+python -m venv venv  
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`  
+3️⃣ Install Dependencies  
+pip install -r requirements.txt  
 
-**Key Features:**
-- Modular **plugin-based** architecture.
-- **Multiprocessing** for command execution.
-- **Dynamic command loading** (new plugins auto-register).
-- **Robust error handling** (division by zero, invalid inputs).
+## Environment Variables Setup  
+Create a .env file in the project root:  
+``ENVIRONMENT=development
+API_KEY=your_secret_api_key
+``
+Ensure .env is ignored by adding this to .gitignore:
 
----
+## Logging Implementation
+The project uses the Python logging module:
 
-## Overview
-This project is a **command-line interactive calculator** that follows the **Command Pattern** and **Plugin Architecture**. The application dynamically loads commands (plugins) and executes them **using multiprocessing** to enhance performance. 
 
-Supported **calculator operations**:
-- Addition (`add`)
-- Subtraction (`subtract`)
-- Multiplication (`multiply`)
-- Division (`divide`) *(with division by zero handling)*
-- Menu (`menu`) *(displays all available commands)*
+import logging
 
-**Key Features:**
-- Modular **plugin-based** architecture.
-- **Multiprocessing** for command execution.
-- **Dynamic command loading** (new plugins auto-register).
-- **Robust error handling** (division by zero, invalid inputs).
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.info("Application started")
 
----
+### Continuous Integration (CI) with GitHub Actions
+1️⃣ Workflow Setup
+The GitHub Actions workflow is in .github/workflows/python-app.yml and runs tests on push to main.
 
-##  **How to Run**
-### **1️⃣ Install Dependencies**
-Before running, ensure you have Python installed. Then, install required dependencies:
-```bash
-source venv/bin/activate
-pip install -r requirements.txt #pip install required packages
-python main.py # Run the Application
-```
+2️⃣ Running Tests Locally
+Run pytest to verify functionality:
+pytest
 
-## Using the Menu
-To see all available commands, type:  
-```
-Enter command: menu
-Available commands: add, subtract, multiply, divide, menu
+📜 GitHub Actions Workflow Example
+This workflow automatically runs tests:
 
-4️⃣ Execute Commands
-Enter command: add  
-Enter first number: 5  
-Enter second number: 3  
-Process Process-1: Result = 8.0  
+name: Python application
 
-Enter command: divide  
-Enter first number: 10  
-Enter second number: 2  
-Process Process-2: Result = 5.0  
-```
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-## Understanding Plugins
-The commands are stored inside the plugins/ directory, making it easy to add new commands dynamically.
-When the program starts, it automatically loads all plugins without modifying main.py.
-Each plugin implements its own logic and registers itself via a register() function.
-
-## Multiprocessing
-Each command runs in a separate process using multiprocessing.
-This prevents blocking the REPL loop, making the calculator more responsive.
-The process name is displayed in the output:
-
-# Running Tests
-1️⃣ Run All Tests<br>
-pytest --cov=app
-
-2️⃣ Test Plugin Commands <br>
-pytest tests/test_plugins.py
-
-3️⃣ Test Multiprocessing<br>
-pytest tests/test_multiprocessing.py
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run tests
+      run: pytest
